@@ -201,12 +201,12 @@ function StringMap(str) {
 }
 
 
-var lang = {};
+
 
 function Parser(options) {
 	// parse with map reduce
 	// warning: username is a tip
-	
+	var lang = {};	
 	var debug = false;
 	if(debug)console.log(">> webshell calling");
 	var lang = null;
@@ -224,35 +224,16 @@ function Parser(options) {
 	} else {
 		throw "no doc defined.";
 	}
+	
 	var events = {};
 	
 	if("lang" in options) {
 		lang = options.lang;
-	} else {
-		lang = options.lang = {
-			CharsetDigit : [
-				[[4,"0123456789"]]
-			],
-			CharsetPositiveDigit : [
-				[[4,"123456789"]]
-			],
-			ArrayDigit : [
-				[[3,"CharsetDigit"]]
-			],
-			PositiveInteger : [
-				[[0,"CharsetPositiveDigit"],[6,"ArrayDigit"]]
-			],
-			Integer : [
-				[[1,"0"]]
-				//,[[0,"PositiveInteger"]]
-			],
-			main:[
-				[[0,"Integer"]]
-			]
-		};
-		events = {
-		
-		}
+	}
+	
+	if("events" in options) {
+		events = options.events;
+	
 	}
 	
 	

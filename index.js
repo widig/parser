@@ -25,10 +25,22 @@ prompt(function(data) {
 		run : true,
 		doc : data,
 		start : "main",
+		lang : {
+			CharsetDigit : [ [[4,"0123456789"]] ],
+			CharsetPositiveDigit : [ [[4,"123456789"]] ],
+			ArrayDigit : [ [[3,"CharsetDigit"]] ],
+			PositiveInteger : [ [[0,"CharsetPositiveDigit"],[6,"CharsetDigit"]] ],
+			Integer : [ [[1,"0"]],[[0,"CharsetPositiveDigit"],[6,"CharsetDigit"]]  ],
+			main : [
+				[[0,"Integer"]]
+			]
+		},
+		events : {
+		}
 	}
 	var r = parser(options);
 	if(r.result) {
-		console.log("PARSED:"+r.code);
+		console.log("PARSED:"+r.code.substring(r.range[0],r.range[1]));
 	}
 	if(data == "exit") throw "exit";
 });

@@ -4,13 +4,14 @@ var rl = readline.createInterface({
 	input: process.stdin,
 	output: process.stdout
 });
+
 function prompt(callback) {
 	rl.question(">", function(answer) {
 		var check = true;
 		try {
 			callback(answer);
 		} catch(e) {
-			console.log("error",e,"\r\n",e.message,"\r\n",e.stack);
+			//console.log("error",e,"\r\n",e.message,"\r\n",e.stack);
 			check = false;
 		}
 		if(check) { 
@@ -31,5 +32,3 @@ prompt(function(data) {
 	}
 	if(data == "exit") throw "exit";
 });
-
-

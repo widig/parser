@@ -230,8 +230,24 @@ function Parser(options) {
 		lang = options.lang;
 	} else {
 		lang = options.lang = {
+			CharsetDigit : [
+				[[4,"0123456789"]]
+			],
+			CharsetPositiveDigit : [
+				[[4,"123456789"]]
+			],
+			ArrayDigit : [
+				[[3,"CharsetDigit"]]
+			],
+			PositiveInteger : [
+				[[0,"CharsetPositiveDigit"],[6,"ArrayDigit"]]
+			],
+			Integer : [
+				[[1,"0"]]
+				//,[[0,"PositiveInteger"]]
+			],
 			main:[
-				[[1,"OK"]]
+				[[0,"Integer"]]
 			]
 		};
 		events = {

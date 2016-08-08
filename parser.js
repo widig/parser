@@ -265,6 +265,9 @@ function Parser(options) {
 	
 	if(!("context" in options)) { // one command context (webrequest)
 		options.context = {};
+		//console.log("new context:",{});
+	} else {
+		//console.log("context:",JSON.stringify(options.context));
 	}
 	
 	var start = null;
@@ -275,7 +278,7 @@ function Parser(options) {
 		options.start = start;
 	}
 	//console.log(">",start);
-	if(debug) console.log(JSON.stringify(options));
+	//if(debug) console.log(JSON.stringify(options));
 	if(debug) console.log("GO!",start);
 	
 	if(!("callstack" in options)) {
@@ -284,7 +287,7 @@ function Parser(options) {
 		options.callstack.push(start);
 	}
 	
-	if(debug) console.log(">> webshell calling4");
+	//if(debug) console.log(">> webshell calling4");
 	
 	options.count -= 1;
 	if(options.count == 0) {
@@ -298,8 +301,9 @@ function Parser(options) {
 	var ruleData = [];
 	
 	
+	
 	if(start in lang) {
-		if(debug) console.log(">> webshell start parsing",start);
+		//if(debug) console.log(">> webshell start parsing",start);
 		for(var x = 0; x < lang[ start ].length; x++) { // rules
 			
 			ruleIndex = x;
@@ -312,7 +316,7 @@ function Parser(options) {
 				if( lang[ start ][x][y][0] == 0 ) { // rule test
 					var startPos = options.pos;
 					options.start = lang[ start ][x][y][1];
-					if(debug) console.log(">>call",lang[ start ][x][y][1],JSON.stringify(options));
+					if(debug) console.log(">>call",lang[ start ][x][y][1]);
 					var r = Parser(options);
 					if(debug) console.log("<<call",start);
 					//if(debug) console.log("back to",start,r);
@@ -409,7 +413,7 @@ function Parser(options) {
 					}
 				} else if( lang[ start ][x][y][0] == 4 ) { // charset
 					if( doc.length> 0 && doc.length - options.pos > 0 && lang[ start ][x][y][1].indexOf( doc.charAt(options.pos) ) !=-1 ) {
-						//console.log("HERE",doc.charAt(options.pos),lang[start][x][y][1]);
+						if (debug) console.log("[HERE]",doc.charAt(options.pos),lang[start][x][y][1]);
 						var startPos = options.pos;
 						options.pos += 1;
 						ruleData.push({type:4,range:[startPos,options.pos]});
@@ -655,7 +659,7 @@ function Parser(options) {
 		throw "unkown " + start + " in given language";
 	}
 	
-	if(debug) console.log(">> webshell end parsing");
+	//if(debug) console.log(">> webshell end parsing");
 	if(debug) console.log(parsed,start,backtrack,options.pos);
 	options.callstack.pop();
 	ret.result = parsed;

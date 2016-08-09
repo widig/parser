@@ -1,0 +1,155 @@
+{
+	"CharsetSpaceNL" : [ [[4," \r\n\t"]] ],
+	"CharsetAlphaLower" : [ [[4,"abcdefghijklmnopqrstuvwxyz"]] ],
+	"CharsetAlphaUpper" : [ [[4,"ABCDEFGHIJKLMNOPQRSTUVWXYZ"]] ],
+	"CharsetAlpha" : [ [[4,"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"]] ],
+	"CharsetPunctuation" : [ [[4,"`~!@#$%^&*()_+-=[]{}\\|;:'\",./<>?"]] ],
+	"CharsetIdentifier" : [ [[4,"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`~!@#$%^&*_+-{}\\|;:'\",./<>?"]] ],
+	"CharsetIdentifierConcatenatorHash" : [ [[4,"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`~!@$%^&*()_+-=[]{}\\|;:'\",./<>?"]] ],
+	"CharsetIdentifierConcatenatorSign" : [ [[4,"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`~!@#$%^&*()_+-=[]{}\\|;:'\",./<?"]] ],
+	"CharsetDigit" : [ [[4,"0123456789"]] ],
+	"CharsetPositiveDigit" : [ [[4,"123456789"]] ],
+	"ArraySpaceNLOptional" : [ 
+		[[0,"CharsetSpaceNL"]],
+		[[2]]
+	],
+	"PreIdentifier" : [ 
+		[[0,"CharsetAlpha"],[3,"CharsetIdentifier"]],
+		[[0,"CharsetAlpha"]]
+	],
+	"Identifier" : [ [[0,"PreIdentifier"]] ],
+	"InlineArgumentBaseOp" : [ [[1,":"]] ],
+	"InlineArgument" : [ [[1,"["],[6,"InlineArgumentBaseOp"],[0,"NonNegativeIntegerJustNumber"],[1,"]"]] ],
+	"PreNonNegativeIntegerJustNumber" : [
+		[[0,"Zero"]],
+		[[0,"CharsetPositiveDigit"],[6,"CharsetDigit"]]
+	],
+	"NonNegativeIntegerJustNumber" : [
+		[[0,"PreNonNegativeIntegerJustNumber"]]
+	],
+	"TypeName" : [ [[3,"CharsetNonBlank"]] ],
+	"ArrayDigit" : [ [[3,"CharsetDigit"]] ],
+	"PlusSignalOptional" : [[[1,"+"]],[[2]]],
+	"MinusSignal" : [[[1,"-"]]],
+	"PrePositiveInteger" : [ [[0,"PlusSignalOptional"],[0,"CharsetPositiveDigit"],[6,"CharsetDigit"]] ],
+	"PositiveInteger" : [ [[0,"PrePositiveInteger"]] ],
+	"PreNegativeInteger" : [ [[0,"MinusSignal"],[0,"CharsetPositiveDigit"],[6,"CharsetDigit"]] ],
+	"NegativeInteger" : [ [[0,"PreNegativeInteger"]] ],
+	"Zero" : [ [[1,"0"]] ],
+	"PreInteger" : [ [[0,"NegativeInteger"]],[[0,"Zero"]],[[0,"PositiveInteger"]]  ],
+	"Integer" : [ [[0,"PreInteger"]]  ],
+	"IdentifierConcatenatorHashCharRule" : [
+		[[1,"\\#"]],
+		[[0,"CharsetIdentifierConcatenatorHash"]]
+	],
+	"IdentifierConcatenatorSignCharRule" : [
+		[[1,"\\>"]],
+		[[0,"CharsetIdentifierConcatenatorSign"]]
+	],
+	"IndentifierConcatenator" : [ 
+		[[1,"<"],[6,"IdentifierConcatenatorSignCharRule"],[1,">"]],
+		[[1,"#"],[6,"IdentifierConcatenatorHashCharRule"],[1,"#"]],
+		[[1,"#"],[6,"IdentifierConcatenatorSignCharRule"],[1,">"]],
+		[[1,"<"],[6,"IdentifierConcatenatorHashCharRule"],[1,"#"]]
+	],
+	"BinaryOperator" : [ 
+		[[1,"+"]],
+		[[1,"Log"]],
+		[[1,"**"]],
+		[[1,"*"]],
+		[[1,"-"]],
+		[[1,"%"]],
+		[[1,"/"]],
+		[[1,"<<"]],
+		[[1,">>"]],
+		[[1,"%"]],
+		[[1,"&"]],
+		[[1,"|"]],
+		[[1,"^"]],
+		[[0,"IndentifierConcatenator"]] 
+	],
+	"Call" : [
+		[[0,"CallBegin"],[0,"Identifier"],[1,"("],[0,"ArraySpaceNLOptional"],[0,"StatementBinaryExpressionArrayOptionalForCall"],[1,")"],[0,"CallEval"]]
+	],
+	"CallBegin" : [
+		[[2]]
+	],
+	"CallEval" : [
+		[[2]]
+	],
+	"Element" : [
+		[[0,"Call"]],
+		[[0,"Integer"]],
+		[[0,"InlineArgument"]],
+		[[0,"Identifier"]]
+	],
+	"HasInlineArgument" : [
+		[[2]]
+	],
+	"ConvertMemoryToInteger" : [
+		[[2]]
+	],
+	"StatementBinaryExpressionArrayOptionalForCall" : [
+		[[0,"StatementBinaryExpressionArrayForCall"]],
+		[[2]]
+	],
+	"StatementBinaryExpressionArrayForCall" : [
+		[[0,"StatementBinaryExpression"],[0,"ArraySpaceNLOptional"],[1,","],[0,"ArraySpaceNLOptional"],[0,"StatementBinaryExpressionArrayForCall"]],
+		[[0,"StatementBinaryExpression"],[0,"ArraySpaceNLOptional"]]
+	],
+	"StatementBinaryExpression" : [
+		[[0,"Element"],[0,"ArraySpaceNLOptional"],[0,"BinaryOperator"],[0,"ArraySpaceNLOptional"],[0,"StatementBinaryExpression"]],
+		[[0,"Element"],[0,"StatementBinaryExpressionEval"]]
+	],
+	"StatementBinaryExpressionEval" : [
+		[[2]]
+	],
+	"StatementCreateOperator" : [ [[1,"create"],[0,"ArraySpaceNLOptional"],[1,"operator"], [0,"ArraySpaceNLOptional"], [0,"TypeName"], [0,"ArraySpaceNLOptional"], [0,"TypeName"], [0,"ArraySpaceNLOptional"], [0,"PositiveInteger"] ] ],
+	"StatementRemoveOperator" : [ [[1,"remove"],[0,"ArraySpaceNLOptional"],[1,"operator"], [0,"ArraySpaceNLOptional"], [0,"TypeName"]] ],
+	"StatementStatusContext" : [ [[1,"StatusContext"]] ],
+	"StatementPopContext" : [ [[1,"PopContext"]] ],
+	"StatementPushContext" : [ [[1,"PushContext"]] ],
+	"AssignmentOperator" : [ 
+		[[1,"C="]],
+		[[1,"O="]],
+		[[1,"N="]],
+		[[1,"="]]
+	],
+	"LeftHandIdentifier" : [
+		[[0,"StatementBinaryExpression"],[0,"LeftHandIdentifierEval"]]
+	],
+	"LeftHandIdentifierEval" : [
+		[[2]]
+	],
+	"RightHandIdentifier" : [
+		[[0,"StatementBinaryExpression"],[0,"RightHandIdentifierEval"]]
+	],
+	"RightHandIdentifierEval" : [
+		[[2]]
+	],
+	"StatementExpression" : [ 
+		[ [0,"LeftHandIdentifier"],[0,"ArraySpaceNLOptional"],[0,"AssignmentOperator"],[0,"ArraySpaceNLOptional"],[0,"RightHandIdentifier"],[0,"StatementExpressionEval"]],
+		[ [0,"StatementBinaryExpression"],[0,"StatementExpressionEval"]]
+	],
+	"IsDefinition" : [
+		[[2]]
+	],
+	"StatementExpressionEval" : [
+		[[2]]
+	],
+	"StatementIdentifiers" : [
+		[[2]]
+	],
+	"Statement" : [
+		[[0,"StatementStatusContext"]]
+		, [[0,"StatementPopContext"]]
+		, [[0,"StatementPushContext"]]
+		, [[0,"StatementExpression"]]
+		, [[0,"StatementCreateOperator"]]
+		, [[0,"StatementRemoveOperator"]]
+		, [[0,"StatementIdentifiers"]]
+	],
+	"main" : [
+		[[0,"Statement"]]
+	]
+}

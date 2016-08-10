@@ -1,0 +1,127 @@
+{
+	"OpenCurlyBrackets" : [ 
+		[ [0,"WhiteSpaceArray"],[1,"{"],[0,"WhiteSpaceArray"] ]
+	],
+	"CloseCurlyBrackets" : [
+		[ [0,"WhiteSpaceArray"],[1,"}"],[0,"WhiteSpaceArray"] ]
+	],
+	"OpenSquareBrackets" : [
+		[ [0,"WhiteSpaceArray"],[1,"["],[0,"WhiteSpaceArray"] ]
+	],
+	"CloseSquareBrackets" : [
+		[ [0,"WhiteSpaceArray"],[1,"]"],[0,"WhiteSpaceArray"] ]
+	],
+	"DoubleQuotationMark" : [
+		[ [0,"WhiteSpaceArray"],[1,"\""],[0,"WhiteSpaceArray"] ]
+	],
+	"Colon" : [
+		[ [0,"WhiteSpaceArray"],[1,","],[0,"WhiteSpaceArray"] ]
+	],
+	"Comma" : [
+		[ [0,"WhiteSpaceArray"],[1,":"],[0,"WhiteSpaceArray"] ]
+	],
+	"WhiteSpace" : [
+		[ [4," \r\n\t"] ]
+	],
+	"WhiteSpaceArray" : [
+		[ [6,"WhiteSpace"] ]
+	],
+	"hex_digit_lower" : [
+		[ [4,"0123456789abcdef"] ]
+	],
+	"hex_digit_upper" : [
+		[ [4,"0123456789ABCDEF"] ]
+	],
+	"hex_digit" : [
+		[ [7,"hex_digit_lower",4,4] ],
+		[ [7,"hex_digit_upper",4,4] ]
+	],
+	"escape_char" : [
+		[ [1,"\""] ],
+		[ [1,"\\"] ],
+		[ [1,"/"] ],
+		[ [1,"b"] ],
+		[ [1,"f"] ],
+		[ [1,"n"] ],
+		[ [1,"r"] ],
+		[ [1,"t"] ],
+		[ [1,"u"],[0,"hex_digit"] ]
+	],
+	"string_char_array" : [
+		[ [1,"\\"],[0,"escape_char"] ],
+		[ [5,32,33] ],
+		[ [5,35,91] ],
+		[ [5,93,1114111] ]
+	],
+	"string" : [
+		[ [0,"DoubleQuotationMark"], [6,"string_char_array"] , [0,"DoubleQuotationMark"] ]
+	],
+	"minus" : [
+		[ [1,"-"] ]
+	],
+	"plus" : [
+		[ [1,"+"] ]
+	],
+	"zero" : [
+		[ [1,"0"] ]
+	],
+	"digit" : [
+		[ [4,"0123456789"] ]
+	],
+	"int" : [
+		[ [0,"zero"] ],
+		[ [3,"digit"] ]
+	],
+	"frac" : [
+		[ [1,"."], [3,"digit"] ]
+	],
+	"signal_opt" : [
+		[ [7,"minus",0,1] ],
+		[ [7,"plus",0,1] ]
+	],
+	"exp" : [
+		[ [1,"e"], [0,"signal_opt"], [3,"digit"] ]
+	],
+	"number" : [
+		[ [7,"minus",0,1], [0,"int"], [7,"frac",0,1],[7,"exp",0,1] ]
+	],
+	"null" : [
+		[ [1,"null"] ]
+	],
+	"false" : [
+		[ [1,"false"] ]
+	],
+	"true" : [ 
+		[ [1,"true"] ]
+	],
+	"value" : [
+		[ [0,"null"] ],
+		[ [0,"false"] ],
+		[ [0,"true"] ],
+		[ [0,"object"] ],
+		[ [0,"array"] ],
+		[ [0,"number" ] ],
+		[ [0,"string"] ]
+	],
+	"member" : [
+		[ [0,"string"] , [ 0,"Colon"] , [ 0, "value"] ]
+	],
+	"members" : [
+		[ [0,"member"], [0,"Comma"], [0,"members"] ],
+		[ [0,"member"] ]
+	],
+	"object" : [
+		[ [0,"OpenCurlyBrackets"], [7,"members",0,1], [0,"CloseCurlyBrackets"] ]
+	],
+	"values" : [
+		[ [0,"value"], [0,"Comma"], [0,"values"] ],
+		[ [0,"value"] ]
+	],
+	"array" : [
+		[ [0,"OpenSquareBrackets"] , [7,"values",0,1], [0,"CloseSquareBrackets"] ]
+	],
+	"main" : [
+		[ [ 0, "object"] ],
+		[ [ 0, "array"] ]
+	]
+}

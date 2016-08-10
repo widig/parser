@@ -4,6 +4,39 @@ var path = require("path");
 
 function StringMap(str) {
 	var map = [{},{}];
+	map.cacheL = {};
+	map.cacheW = {};
+	/*
+		o primeiro object indica em que indice está a letra
+		os outros objectos pela sua posição do objeto qual a contagem da letra em termos de repetição.
+		e a posição na string está contida no valor acessado pela letra.
+		
+		[
+			{
+				x : 4 -> na posição x da string a letra é acessada pelo quarto objeto
+			}
+			,
+			{
+			} // -> primeiro objeto -> contem letras que aparecem pela primeira vez
+			,
+			{
+			}// -> segundo objeto -> contem letras que aparecem pela segunda vez
+			,
+			{
+			} // -> terceiro objeto -> contem letras que aparecem pela terceira vez
+			,
+			{
+				a : x -> letra a na posição x da string
+			} // -> quarto objeto -> contem letras que aparecem pela quarta vez
+			.
+			.
+			.
+		]
+		first object marks count of reference
+		second object is all letters that appeared once since it
+		third object is all letters that appeared twice since it
+		fourth object is all letters that appeared three times since it
+	*/
 	for(var x = 0; x < str.length;x++) {
 		var index = -1;
 		var ch = str.charAt(x);
@@ -30,7 +63,7 @@ function StringMap(str) {
 		}
 	}
 	map[0].length = str.length;
-	map.count = function(c) {
+	map.count = function(c) { // letter
 		var counter = 0;
 		for(var x= 1; x < map.length;x++) {
 			if(c in map[x]) {
@@ -41,7 +74,7 @@ function StringMap(str) {
 		}
 		return counter;
 	}
-	map.before = function(c) {
+	map.before = function(c) { // return [ count of letter c,0 or char before letter c ] array
 		var arr = [];
 		for(var x= 1; x < map.length;x++) {
 			if(c in map[x]) {
@@ -64,7 +97,7 @@ function StringMap(str) {
 		}
 		return arr;	
 	}
-	map.after = function(c) {
+	map.after = function(c) { // return [ count of letter c, 0 or char after letter c] array
 		var arr = [];
 		for(var x= 1; x < map.length;x++) {
 			if(c in map[x]) {
@@ -84,16 +117,19 @@ function StringMap(str) {
 		}
 		return arr;
 	}
-	map.where = function(c) {
+	map.where = function(c) { // return all positions WHERE letter c appears
+		if(c in this.cacheL) return this.cacheL[c].slice();
 		var arr = [];
 		for(var x = 1; x < map.length;x++) {
 			if(c in map[x]) {
 				arr.push( map[x][c] );
 			}
 		}
+		this.cacheL[c] = arr.slice();
 		return arr;
 	}
-	map.whereString = function(pat) {
+	map.whereString = function(pat) { // eleminate by regions where letters of pat string appears. and return remaining positions. so find all positions where string appears.
+		if(pat in this.cacheW) return this.cacheW[pat].slice();
 		var regions = map.where(pat.charAt(0));
 		var testLen = regions.length;
 		while(testLen>0) {
@@ -110,9 +146,15 @@ function StringMap(str) {
 			}
 			testLen -= 1;
 		}
+		this.cacheW[pat] = regions.slice();
 		return regions;
 	}
-	map.whereSequence = function(options) {
+	map.whereSequence = function(options) { // find all positions of combinations of the given strings in sequence appears.
+		//sample
+		//   var m1 = Pattern2("123 abc 456 789 123 123 789 567 789");
+		//   console.log("seq:",m1.whereSequence({},"123","abc","789"));
+		// >>[[0,4,12],[0,4,24],[0,4,32]
+		// CUKI art. hard to explain. blame money lack.
 		
 		var imap = {};
 		for(var x = 1; x < arguments.length;x++) {
@@ -239,6 +281,7 @@ function Parser(options) {
 	
 	if(!("map" in options)) {
 		options.map = StringMap(doc);
+		//console.log(JSON.stringify(options.map));
 	}
 	
 	if(!("count" in options)) {
@@ -358,11 +401,7 @@ function Parser(options) {
 								regions = map.where( lang[ start ][x][y][1].charAt(0) );
 							}
 							//console.log("error?",start,x,y,lang[ start ][x][y][1],lang[ start ][x][y][1].charAt(0),regions,regions.length);
-							var arr1 = [];
-							var arr2 = [];
-							for(var z = 0; z < lang[start][x][y][1].length;z++) arr1.push(lang[start][x][y][1].charCodeAt(z));
-							for(var z = 0; z < doc.substring(options.pos).length && z < lang[start][x][y][1].length;z++) arr2.push( doc.charCodeAt(z+options.pos) );
-							//console.log("test string:",lang[start][x][y][1],doc.substring(options.pos),arr1,arr2);
+							
 							var testLen = regions.length;
 							var check = false;
 							while(testLen>0) {
@@ -411,16 +450,8 @@ function Parser(options) {
 					} else {
 						// true for this rule = empty
 					}
-				} else if( lang[ start ][x][y][0] == 4 ) { // charset
-					if( doc.length> 0 && doc.length - options.pos > 0 && lang[ start ][x][y][1].indexOf( doc.charAt(options.pos) ) !=-1 ) {
-						if (debug) console.log("[HERE]",doc.charAt(options.pos),lang[start][x][y][1]);
-						var startPos = options.pos;
-						options.pos += 1;
-						ruleData.push({type:4,range:[startPos,options.pos]});
-					} else {						
-						rule = false;
-						break;
-					}
+				} else if( lang[ start ][x][y][0] == 2 ) { // empty
+					ruleData.push({type:2});
 				} else if( lang[ start ][x][y][0] == 3 ) { // array of rule (+)
 					var startPos = options.pos;
 					var dataArray = [];
@@ -456,8 +487,16 @@ function Parser(options) {
 						rule = false;
 						break;
 					}
-				} else if( lang[ start ][x][y][0] == 2 ) { // empty
-					ruleData.push({type:2});
+				} else if( lang[ start ][x][y][0] == 4 ) { // charset
+					if( doc.length> 0 && doc.length - options.pos > 0 && lang[ start ][x][y][1].indexOf( doc.charAt(options.pos) ) !=-1 ) {
+						if (debug) console.log("[HERE]",doc.charAt(options.pos),lang[start][x][y][1]);
+						var startPos = options.pos;
+						options.pos += 1;
+						ruleData.push({type:4,range:[startPos,options.pos]});
+					} else {						
+						rule = false;
+						break;
+					}
 				} else if(lang[ start ][x][y][0] == 5) { // code range
 					if( 
 						doc.length> 0 && 
@@ -646,7 +685,7 @@ function Parser(options) {
 				} else if(lang[start][x][y][0] == 15) {
 					options.comments.push( lang[start][x][y][1] );
 				} else {
-					console.log("item code:",JSON.stringify(lang));
+					if(debug) console.log("item code:",JSON.stringify(lang));
 					throw "unkown rule item type";
 				}
 			}

@@ -2,6 +2,7 @@ var fs = require("fs");
 var path = require("path");
 var readline = require('readline');
 var parser = require("./parser.js");
+var tests = require("./tests.js");
 var debug = true;
 var ansi = require("./ansi.js");
 var rl = readline.createInterface({
@@ -40,9 +41,13 @@ function prompt(callback) {
 	}
 }
 
-var selected_language = "test"
+
 var context = {};
 
+// load last preferences of language
+
+var selected_language = "json"
+var version = "v.1.0";
 if(!("context" in context)) {
 	var files = fs.readdirSync("./language" + path.sep + selected_language + path.sep + "memory");
 	context.context = [];
@@ -52,78 +57,53 @@ if(!("context" in context)) {
 	}
 	context.memory = context.context[ context.context.length-1 ];
 }
+tests.startTest(selected_language,script);
 
-var tests = 0;
-var maxTests = -1;
-var isTest = false;
-if(fs.existsSync("./language" + path.sep + selected_language + path.sep + "tests")) {
-	var files = fs.readdirSync("./language" + path.sep + selected_language + path.sep + "tests");
-	maxTests = files.length;
-	var max = -1;
-	for(var x = 0; x < maxTests;x++) {
-		if(fs.existsSync("./language" + path.sep + selected_language + path.sep + "tests" + path.sep + x + ".txt")) {
-			max = x;
-		}
-	}
-	maxTests = max+1;
-	if(tests<maxTests) {
-		isTest = true;
-		var obj = fs.readFileSync("./language" + path.sep + selected_language + path.sep + "tests" + path.sep + tests + ".txt","utf8");
-		script.push(obj);
-		tests+=1;
-	}
-}
 prompt(function(data) {
-	
 	var options  = {
+		shellEnqueue : function(data) { script.push(data); },
+		shellExit : function() { this.exitRequested = true; },
+		shellLanguageSwitch : function(lang) { 
+			selected_language = lang; 
+			
+			// load memory?
+			if("context" in context) {
+				delete context.context;
+			}
+			if(!("context" in context)) {
+				var files = fs.readdirSync("./language" + path.sep + selected_language + path.sep + "memory");
+				context.context = [];
+				for(var x = 0; x < files.length;x++) {
+					var obj = JSON.parse( fs.readFileSync( "./language" + path.sep + selected_language + path.sep + "memory" + path.sep + x + ".json", "utf8" ) );
+					context.context.push(obj);
+				}
+				context.memory = context.context[ context.context.length-1 ];
+			}
+			
+			
+		},
+		exitRequested : false,
 		run : true,
 		doc : data,
 		start : "main",
 		context : context,
-		lang : JSON.parse(fs.readFileSync("./language" + path.sep + selected_language + path.sep + "v.1.0.json","utf8")),
-		events : require("./language" + path.sep + selected_language + path.sep + "v.1.0.js")
+		skipEvents : {"charset_whitespace":1,"whitespace":1,"zeroOrMoreOf:charset_whitespace[0]":1},
+		lang : JSON.parse(fs.readFileSync("./language" + path.sep + selected_language + path.sep + version + ".json","utf8")),
+		events : require("./language" + path.sep + selected_language + path.sep + version + ".js")
 	}
 	try {
 		var r = parser(options);
 		if(r.result) {
 			console.log("PARSED:"+r.code.substring(r.range[0],r.range[1]));
-			if(isTest) {
-				if(fs.existsSync("./language" + path.sep + selected_language + path.sep + "tests" + path.sep + (tests-1) + ".json")) {
-					var obj = JSON.parse( fs.readFileSync( "./language" + path.sep + selected_language + path.sep + "tests" + path.sep + (tests-1) + ".json" ) );
-					if(obj.result) {
-						console.log(ansi.fg.green + "[test "+(tests-1)+" " +ansi.fg.white + "OK" + ansi.fg.green+ " ]" + ansi.fg.yellow);
-					} else {
-						console.log(ansi.fg.green + "[test "+(tests-1)+" " +ansi.fg.red + "FAIL" + ansi.fg.green+ " ]" + ansi.fg.yellow);
-					}
-				} else {
-					console.log(ansi.fg.green + "[test "+(tests-1)+" passed]" + ansi.fg.yellow);
-				}
-			}
+			tests.checkTestOK(selected_language,r.code.substring(r.range[0],r.range[1]));
 		} else {
-			if(isTest) {
-				if(fs.existsSync("./language" + path.sep + selected_language + path.sep + "tests" + path.sep + (tests-1) + ".json")) {
-					var obj = JSON.parse( fs.readFileSync( "./language" + path.sep + selected_language + path.sep + "tests" + path.sep + (tests-1) + ".json" ) );
-					if(!obj.result) {
-						console.log(ansi.fg.green + "[test "+(tests-1)+" " +ansi.fg.white + "OK" + ansi.fg.green+ " ]" + ansi.fg.yellow);
-					} else {
-						console.log(ansi.fg.green + "[test "+(tests-1)+" " +ansi.fg.red + "FAIL" + ansi.fg.green+ " ]" + ansi.fg.yellow);
-					}
-				} else {
-					console.log(ansi.fg.green + "[test "+(tests-1)+" passed]" + ansi.fg.yellow);
-				}
-			}
+			tests.checkTestFAIL(selected_language);
 		}
 	} catch(e) {
 		if(debug) console.log(e);
 		if(debug) console.log(e.stack);
 	}
-	if(tests<maxTests) {
-		var obj = fs.readFileSync("./language" + path.sep + selected_language + path.sep + "tests" + path.sep + tests + ".txt","utf8");
-		script.push(obj);
-		tests+=1;
-	} else {
-		isTest = false;
-	}
-	if(data == "exit") throw "exit";
+	tests.iterTest(selected_language,script);
+	if(data == "exit" || options.exitRequested) throw "exit";
 	
 });

@@ -118,18 +118,18 @@ function StringMap(str) {
 		return arr;
 	}
 	map.where = function(c) { // return all positions WHERE letter c appears
-		if(c in this.cacheL) return this.cacheL[c].slice();
+		//if(c in this.cacheL) return this.cacheL[c].slice();
 		var arr = [];
 		for(var x = 1; x < map.length;x++) {
 			if(c in map[x]) {
 				arr.push( map[x][c] );
 			}
 		}
-		this.cacheL[c] = arr.slice();
+		//this.cacheL[c] = arr.slice();
 		return arr;
 	}
 	map.whereString = function(pat) { // eleminate by regions where letters of pat string appears. and return remaining positions. so find all positions where string appears.
-		if(pat in this.cacheW) return this.cacheW[pat].slice();
+		//if(pat in this.cacheW) return this.cacheW[pat].slice();
 		var regions = map.where(pat.charAt(0));
 		var testLen = regions.length;
 		while(testLen>0) {
@@ -146,7 +146,7 @@ function StringMap(str) {
 			}
 			testLen -= 1;
 		}
-		this.cacheW[pat] = regions.slice();
+		//this.cacheW[pat] = regions.slice();
 		return regions;
 	}
 	map.whereSequence = function(options) { // find all positions of combinations of the given strings in sequence appears.
@@ -187,7 +187,7 @@ function StringMap(str) {
 		console.log(JSON.stringify(imap));
 		while(stack.length>0) {
 			var item = stack.shift();
-			console.log( "item:",item[0],"index:",item[1], arguments[item[0]+1] );
+			//console.log( "item:",item[0],"index:",item[1], arguments[item[0]+1] );
 			if(
 				item[0]+1 < arguments.length &&
 				imap[ arguments[ item[0]+1 ] ].length > 0 && 
@@ -199,7 +199,7 @@ function StringMap(str) {
 				prod[ prod.length-1 ].push( imap[ arguments[ item[0]+1 ] ][ item[1] ] );
 				stack.unshift([item[0],item[1]+1, item[2] ]);
 				stack.unshift([item[0]+1,0, imap[ arguments[ item[0]+1 ] ][ item[1] ] + arguments[ item[0]+1].length ]);
-				console.log("found:",arguments[item[0]+1],JSON.stringify(prod));
+				//console.log("found:",arguments[item[0]+1],JSON.stringify(prod));
 			} else {
 				if(item[0] + 1 >= arguments.length) {
 					console.log("dead end");
@@ -250,7 +250,7 @@ function Parser(options) {
 	// warning: username is a tip
 	var lang = {};	
 	var debug = false;
-	if(debug)console.log(">> webshell calling");
+	//if(debug)console.log(">> webshell calling");
 	var lang = null;
 	var doc = null;
 	var ret = {};
@@ -285,7 +285,7 @@ function Parser(options) {
 	}
 	
 	if(!("count" in options)) {
-		options.count = 100;	
+		options.count = 10000;	
 	}
 	if(!("backtrack" in options)) {
 		options.backtrack = 0;	
@@ -335,7 +335,7 @@ function Parser(options) {
 	options.count -= 1;
 	if(options.count == 0) {
 		if(debug) console.log("error");
-		return { result : false, error : true };
+		throw "counter underflow";
 	}
 	var parsed = false;
 	var backtrack = options.pos;
@@ -350,21 +350,26 @@ function Parser(options) {
 		for(var x = 0; x < lang[ start ].length; x++) { // rules
 			
 			ruleIndex = x;
+			
 			ruleData = [];
-			if(debug) console.log("start:",start,x);
 			var rule = true;
 			options.pos = backtrack;
 			for(var y = 0; y < lang[ start ][x].length;y++) { // rule items
-				if(debug) console.log("rule item:",y, "type:",lang[ start ][x][y][0]);
+				//console.log(start,x,y);
+				//console.log("start",start,"x:",x, "rule item:",y, "type:",lang[ start ][x][y][0]," pos:",options.pos);
 				if( lang[ start ][x][y][0] == 0 ) { // rule test
 					var startPos = options.pos;
+					var backup_start = start;
 					options.start = lang[ start ][x][y][1];
-					if(debug) console.log(">>call",lang[ start ][x][y][1]);
+					//if(debug) console.log(">>call",lang[ start ][x][y][1]);
 					var r = Parser(options);
-					if(debug) console.log("<<call",start);
+					start = backup_start;
+					
+					//if(debug) console.log("<<call",start);
 					//if(debug) console.log("back to",start,r);
 					if(r.result) {
 						ruleData.push({
+							name : "ruleIn",
 							index : r.index,
 							type:0,name:lang[ start ][x][y][1],
 							range:[ startPos, options.pos],
@@ -375,10 +380,10 @@ function Parser(options) {
 						break;
 					}
 				} else if( lang[ start ][x][y][0] == 1 ) { // string
-					if(debug) console.log("at string parsing(1):",options.pos,x,y,lang[start][x][y]);
+					//if(debug) console.log("at string parsing(1):",options.pos,x,y,lang[start][x][y]);
 					if( lang[ start ][x][y][1].length > 0) {
 						if(lang[ start ][x][y][1].length > (doc.length - options.pos) ) {
-							if(debug) console.log("pattern is greater than input.");
+							console.log("pattern is greater than input.");
 							rule = false;
 							break;
 						} else {
@@ -429,7 +434,6 @@ function Parser(options) {
 								testLen -= 1;
 							}
 							// change to cache
-							options.cached[ start + ":" + y ] = regions;
 							for(var z = 0; z < regions.length;z++) {
 								if(regions[z] == options.pos) {
 									check = true;
@@ -442,16 +446,24 @@ function Parser(options) {
 								rule = false;
 								break;
 							} else {
+								//console.log("[found]: " + lang[start][x][y][1]);
 								var startPos = options.pos;
 								options.pos += lang[ start ][x][y][1].length;
-								ruleData.push({type:1,range:[startPos,options.pos]});
+								ruleData.push({
+									type:1,
+									name : "string:"+lang[start][x][y][1],
+									range:[startPos,options.pos]
+								});
 							}								
 						}
 					} else {
 						// true for this rule = empty
 					}
 				} else if( lang[ start ][x][y][0] == 2 ) { // empty
-					ruleData.push({type:2});
+					ruleData.push({
+						type:2,
+						name : "alwaysTrue"
+					});
 				} else if( lang[ start ][x][y][0] == 3 ) { // array of rule (+)
 					var startPos = options.pos;
 					var dataArray = [];
@@ -459,10 +471,10 @@ function Parser(options) {
 					var backup_start = start;
 					options.start = lang[ start ][x][y][1];
 					var r = Parser(options);
-					start = backup_start
+					start = backup_start;
 					
 					var ci = 0;
-					if(debug) console.log("back to",start);
+					//if(debug) console.log("back to",start);
 					if(r.result) {
 						dataArray.push(r);
 						while(r.result) {
@@ -474,14 +486,19 @@ function Parser(options) {
 							var r = Parser(options);
 							start = backup_start;
 					
-							if(debug) console.log("back to",start);
+							//if(debug) console.log("back to",start);
 							if(!r.result) {
 								options.pos = miniback2;
 							} else {
 								dataArray.push(r);
 							}
 						}
-						ruleData.push({type:3,count:ci,range:[startPos,options.pos],data:dataArray});
+						ruleData.push({
+							type:3,
+							name : "oneOrMoreOf:"+lang[start][x][y][1] + "[" + ci + "]",
+							count:ci,
+							range:[startPos,options.pos],data:dataArray
+						});
 					} else {
 						options.pos = startPos;
 						rule = false;
@@ -489,10 +506,14 @@ function Parser(options) {
 					}
 				} else if( lang[ start ][x][y][0] == 4 ) { // charset
 					if( doc.length> 0 && doc.length - options.pos > 0 && lang[ start ][x][y][1].indexOf( doc.charAt(options.pos) ) !=-1 ) {
-						if (debug) console.log("[HERE]",doc.charAt(options.pos),lang[start][x][y][1]);
+						if (debug) console.log("[charset]",doc.charAt(options.pos),lang[start][x][y][1]);
 						var startPos = options.pos;
 						options.pos += 1;
-						ruleData.push({type:4,range:[startPos,options.pos]});
+						ruleData.push({
+							type:4,
+							name : "charset:" + lang[start][x][y][1],
+							range:[startPos,options.pos]
+						});
 					} else {						
 						rule = false;
 						break;
@@ -506,7 +527,11 @@ function Parser(options) {
 					) {
 						var startPos = options.pos;
 						options.pos += 1;
-						ruleData.push({type:5,range:[startPos, options.pos]});
+						ruleData.push({
+							type:5,
+							name : "codeRange:(" + lang[start][x][y][1] + "," + lang[start][x][y][2] + ":" + doc.charCodeAt(options.pos-1) + ")",
+							range:[startPos, options.pos]
+						});
 					} else {
 						rule = false;
 						break;
@@ -521,7 +546,7 @@ function Parser(options) {
 					start = backup_start;
 					
 					
-					if(debug) console.log("back to",start);
+					//if(debug) console.log("back to",start);
 					var ci = 0;
 					if(r.result) {
 						dataArray.push(r);
@@ -534,17 +559,29 @@ function Parser(options) {
 							var r = Parser(options);
 							start = backup_start;
 							
-							if(debug) console.log("back to",start);
+							//if(debug) console.log("back to",start);
 							if(!r.result) {
 								options.pos = miniback2;	
 							} else {
 								dataArray.push(r);
 							}
 						}
-						ruleData.push({type:6,count:ci,range:[miniback,options.pos],data:dataArray});
+						ruleData.push({
+							type:6,
+							name : "zeroOrMoreOf:" + lang[ start ][x][y][1] + "[" + ci + "]",
+							count:ci,
+							range:[miniback,options.pos],
+							data:dataArray
+						});
 					} else {
 						options.pos = miniback;
-						ruleData.push({type:6,count:0,range:[miniback,options.pos],data:[]});
+						ruleData.push({
+							type:6,
+							name : "zeroOrMoreOf:" + lang[ start ][x][y][1] + "[0]",
+							count:0,
+							range:[miniback,options.pos],
+							data:[]
+						});
 					}
 				} else if(lang[start][x][y][0] == 7) { // typed array {n,m}					
 					var min = lang[start][x][y][2];
@@ -596,20 +633,18 @@ function Parser(options) {
 						}
 					}						
 				} else if(lang[start][x][y][0] == 8) { // set var function
-					// 8, target, function, args
-					var arr = [];
-					for(var z = 0; z < lang[start][x][y][3].length;z++) {
-						arr.push( options.vars[ lang[start][x][y][3][z] ] );
-					}
-					var data = lang[start][x][y][2].apply(null,arr);
-					options.vars[ lang[start][x][y][1] ] = data;
-					ruleData.push({type:8,range:[options.pos,options.pos],key:lang[start][x][y][1],value:data});
+					// 8, target, value
+					options.vars[ lang[start][x][y][1] ] = lang[start][x][y][2];
+					ruleData.push({type:8,range:[options.pos,options.pos],key:lang[start][x][y][1],value:lang[start][x][y][2]});
 				} else if(lang[start][x][y][0] == 9) { // unset var
 					// 9, target
 					delete options.vars[ lang[start][x][y][1] ];
 					ruleData.push({type:9,range:[options.pos,options.pos],key:lang[start][x][y][1]});
 				} else if(lang[start][x][y][0] == 10) { // choice path by var, first path is first bit, second path is second bit
-					// 10, target, paths
+					// 10, target, [paths]
+					/*
+						[10,"VAR_A",["RULE_BIT0","RULE_BIT1"]]
+					*/
 					var data = options.vars[ lang[start][x][y][1] ];
 					var startPos = options.pos;
 					var dataArray = [];
@@ -642,7 +677,11 @@ function Parser(options) {
 					) {
 						var startPos = options.pos;
 						options.pos += 1;
-						ruleData.push({type:11,range:[startPos, options.pos]});
+						ruleData.push({
+							type:11,
+							name : "anycharcode:"+doc.charCodeAt(options.pos-1),
+							range:[startPos, options.pos]
+						});
 					} else {
 						rule = false;
 						break;
@@ -652,24 +691,28 @@ function Parser(options) {
 					rule = false;
 					break;
 				} else if(lang[start][x][y][0] == 13) { // if
-					var miniback = options.pos;
+					// 13 rule_true target or_value and_value
 					
+					var miniback = options.pos;
 					var backup_start = start;
 					options.start = lang[ start ][x][y][1];
 					var r = Parser(options);
 					start = backup_start;
 					
-					
 					if(r.result) {
 						options.pos = miniback;
-						ruleData.push({type:13, rule: lang[ start ][x][y][1]});
+						ruleData.push({
+							type:13, 
+							name : "if:"+lang[ start ][x][y][1] + "[" + true + "]",
+							rule: lang[ start ][x][y][1]
+						});
 					} else {
 						rule = false;
 						break;
 					}
 				} else if(lang[start][x][y][0] == 14) { // ifn
 					var miniback = options.pos;
-					
+					// 14 rule_false target or_value and_value
 					var backup_start = start;
 					options.start = lang[ start ][x][y][1];
 					var r = Parser(options);
@@ -682,11 +725,13 @@ function Parser(options) {
 						rule = false;
 						break;
 					}
+					
 				} else if(lang[start][x][y][0] == 15) {
+					// 15 comments
 					options.comments.push( lang[start][x][y][1] );
 				} else {
 					if(debug) console.log("item code:",JSON.stringify(lang));
-					throw "unkown rule item type";
+					throw "unkown rule item type" + lang[start][x][y][0];
 				}
 			}
 			if(rule == true) {
@@ -699,7 +744,7 @@ function Parser(options) {
 	}
 	
 	//if(debug) console.log(">> webshell end parsing");
-	if(debug) console.log(parsed,start,backtrack,options.pos);
+	//if(debug) console.log(parsed,start,backtrack,options.pos);
 	options.callstack.pop();
 	ret.result = parsed;
 	ret.name = start;
@@ -719,7 +764,7 @@ function Parser(options) {
 	if(run) {
 		var data = ret;
 		if(data.result) {
-			if(debug) console.log(">> webshell start event handling");
+			//if(debug) console.log(">> webshell start event handling");
 			// console.log(JSON.stringify(events));
 			var stack = [ data ];
 			while(stack.length>0) {
@@ -730,20 +775,24 @@ function Parser(options) {
 						stack.unshift(rule.data[rule.data.length-1-x]);
 					}
 				}
+				if(rule.name in options.skipEvents) {
 				
-				if(rule.name in events) {
-					var arr = [];
-					for(var x = 0; x < rule.data.length;x++) {
-						if("range" in rule.data[x]) {
-							arr.push( data.code.substring( rule.data[x].range[0], rule.data[x].range[1] ) );
+				} else {
+					console.log(rule.name);
+					if(rule.name in events) {
+						var arr = [];
+						for(var x = 0; x < rule.data.length;x++) {
+							if("range" in rule.data[x]) {
+								arr.push( data.code.substring( rule.data[x].range[0], rule.data[x].range[1] ) );
+							}
 						}
+						// console.log("@@ TRIGGER!!",rule.index,arr);
+						// first argument is context, which is the machine
+						events[ rule.name ](  options.context /*machine*/,rule.index, arr  );
 					}
-					// console.log("@@ TRIGGER!!",rule.index,arr);
-					// first argument is context, which is the machine
-					events[ rule.name ](  options.context /*machine*/,rule.index, arr  );
 				}
 			}
-			if(debug) console.log(">> webshell end event handling");
+			//if(debug) console.log(">> webshell end event handling");
 		}
 	}
 	return ret;	

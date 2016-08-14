@@ -1,0 +1,103 @@
+{
+	"charset_whitespace" : [
+		[[4," \r\n\t"]]
+	],
+	"whitespace" : [
+		[[6,"charset_whitespace"]]
+	],
+	"object" : [
+		[[0,"whitespace"],[1,"{"],[0,"whitespace"],[0,"members_optional"],[0,"whitespace"],[1,"}"],[0,"whitespace"]]
+	],
+	"members_optional" : [
+		[[0,"members"]],
+		[[2]]
+	],
+	"members" : [
+		[[0,"member"],[0,"whitespace"],[1,","],[0,"whitespace"],[0,"members"]],
+		[[0,"member"]]
+	],
+	"member" : [
+		[[0,"string"],[0,"whitespace"],[1,":"],[0,"whitespace"],[0,"value"]]
+	],
+	"charset_digit" : [
+		[[4,"0123456789"]]
+	],
+	"charset_pdigit" : [
+		[[4,"123456789"]]
+	],
+	"pnumber" : [
+		[[0,"charset_pdigit"],[6,"charset_digit"]]
+	],
+	"int" : [
+		[[1,"0"]],
+		[[0,"pnumber"]]
+	],
+	"minus_optional" : [
+		[[1,"-"]],
+		[[2]]
+	],
+	"frac_optional" : [
+		[[1,"."],[3,"charset_digit"]],
+		[[2]]
+	],
+	"eE" : [
+		[[1,"e"]],
+		[[1,"E"]]
+	],
+	"minus_plus_optional" : [
+		[[1,"+"]],
+		[[1,"-"]],
+		[[2]]
+	],
+	"exp_optional" : [
+		[[0,"eE"],[0,"minus_plus_optional"],[3,"charset_digit"]],
+		[[2]]
+	],
+	"number" : [
+		[[0,"minus_optional"],[0,"int"],[0,"frac_optional"],[0,"exp_optional"]]
+	],
+	"string_char_unescaped" : [
+		[[5,32,33]],
+		[[5,35,91]],
+		[[5,93,1114111]]
+	],
+	"string_char_escaped" : [
+		[[1,"\""]],
+		[[1,"\\"]],
+		[[1,"/"]],
+		[[1,"b"]],
+		[[1,"f"]],
+		[[1,"n"]],
+		[[1,"r"]],
+		[[1,"t"]],
+		[[1,"u"]]
+	],
+	"string_char" : [
+		[[0,"string_char_unescaped"]],
+		[[1,"\\"],[0,"string_char_escaped"]]
+	],
+	"string" : [
+		[[1,"\""],[6,"string_char"],[1,"\""]]
+	],
+	"value" : [
+		[[0,"array"]],
+		[[0,"object"]],
+		[[0,"number"]],
+		[[0,"string"]]
+	],
+	"values" : [
+		[[0,"value"],[0,"whitespace"],[1,","],[0,"whitespace"],[0,"values"]],
+		[[0,"value"]]
+	],
+	"values-optional" : [
+		[[0,"values"]],
+		[[2]]
+	],
+	"array" : [
+		[[0,"whitespace"],[1,"["],[0,"whitespace"],[0,"values-optional"],[0,"whitespace"],[1,"]"],[0,"whitespace"]]
+	],
+	"main" : [
+		[[0,"object"]],
+		[[0,"array"]]
+	]
+}

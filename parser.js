@@ -383,7 +383,7 @@ function Parser(options) {
 					//if(debug) console.log("at string parsing(1):",options.pos,x,y,lang[start][x][y]);
 					if( lang[ start ][x][y][1].length > 0) {
 						if(lang[ start ][x][y][1].length > (doc.length - options.pos) ) {
-							console.log("pattern is greater than input.");
+							throw "pattern is greater than input.";
 							rule = false;
 							break;
 						} else {
@@ -778,7 +778,7 @@ function Parser(options) {
 				if(rule.name in options.skipEvents) {
 				
 				} else {
-					console.log(rule.name);
+					//console.log(rule.name);
 					if(rule.name in events) {
 						var arr = [];
 						for(var x = 0; x < rule.data.length;x++) {

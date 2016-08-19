@@ -6,7 +6,10 @@
 		[[6,"charset_whitespace"]]
 	],
 	"object" : [
-		[[0,"whitespace"],[1,"{"],[0,"whitespace"],[0,"members_optional"],[0,"whitespace"],[1,"}"],[0,"whitespace"]]
+		[[0,"whitespace"],[1,"{"],[0,"whitespace"],[0,"members_optional"],[0,"whitespace"],[1,"}"],[0,"whitespace"],[0,"object_finish"]]
+	],
+	"object_finish" : [
+		[[2]]
 	],
 	"members_optional" : [
 		[[0,"members"]],
@@ -17,7 +20,29 @@
 		[[0,"member"]]
 	],
 	"member" : [
-		[[0,"string"],[0,"whitespace"],[1,":"],[0,"whitespace"],[0,"value"]]
+		[
+			[0,"member_bk"],
+			[0,"string"],
+			[0,"member_ak"],
+			[0,"whitespace"],
+			[1,":"],
+			[0,"whitespace"],
+			[0,"member_bv"],
+			[0,"value"],
+			[0,"member_av"]
+		]
+	],
+	"member_bk" : [
+		[[2]]
+	],
+	"member_ak" : [
+		[[2]]
+	],
+	"member_bv" : [
+		[[2]]
+	],
+	"member_av" : [
+		[[2]]
 	],
 	"charset_digit" : [
 		[[4,"0123456789"]]
@@ -25,6 +50,7 @@
 	"charset_pdigit" : [
 		[[4,"123456789"]]
 	],
+	
 	"pnumber" : [
 		[[0,"charset_pdigit"],[6,"charset_digit"]]
 	],
@@ -53,15 +79,31 @@
 		[[0,"eE"],[0,"minus_plus_optional"],[3,"charset_digit"]],
 		[[2]]
 	],
-	"number" : [
+	"pre_number" : [
 		[[0,"minus_optional"],[0,"int"],[0,"frac_optional"],[0,"exp_optional"]]
+	],
+	"number" : [
+		[[0,"pre_number"]]
 	],
 	"string_char_unescaped" : [
 		[[5,32,33]],
 		[[5,35,91]],
 		[[5,93,1114111]]
 	],
-	"string_char_escaped" : [
+	"charset_hex_lower" : [
+		[[4,"0123456789abcdef"]]
+	],
+	"charset_hex_upper" : [
+		[[4,"0123456789ABCDEF"]]
+	],
+	"hex_digit" : [
+		[[0,"charset_hex_lower"]],
+		[[0,"charset_hex_upper"]]
+	],
+	"hex_digits" : [
+		[[7,"hex_digit",4,4]]
+	],
+	"string_escaped" : [
 		[[1,"\""]],
 		[[1,"\\"]],
 		[[1,"/"]],
@@ -70,11 +112,14 @@
 		[[1,"n"]],
 		[[1,"r"]],
 		[[1,"t"]],
-		[[1,"u"]]
+		[[1,"u"],[7,"hex_digit",4,4]]
+	],
+	"string_char_escaped" : [
+		[[1,"\\"],[0,"string_escaped"]]
 	],
 	"string_char" : [
 		[[0,"string_char_unescaped"]],
-		[[1,"\\"],[0,"string_char_escaped"]]
+		[[0,"string_char_escaped"]]
 	],
 	"string" : [
 		[[1,"\""],[6,"string_char"],[1,"\""]]
@@ -83,21 +128,39 @@
 		[[0,"array"]],
 		[[0,"object"]],
 		[[0,"number"]],
-		[[0,"string"]]
+		[[0,"string"]],
+		[[0,"boolean"]],
+		[[0,"null"]]
+	],
+	"null" : [
+		[[1,"null"]]
+	],
+	"boolean" : [
+		[[1,"true"]],
+		[[1,"false"]]
 	],
 	"values" : [
-		[[0,"value"],[0,"whitespace"],[1,","],[0,"whitespace"],[0,"values"]],
-		[[0,"value"]]
+		[[0,"value"],[0,"value_in"],[0,"whitespace"],[1,","],[0,"whitespace"],[0,"values"]],
+		[[0,"value"],[0,"value_in"]]
+	],
+	"value_in" : [
+		[[2]]
 	],
 	"values-optional" : [
 		[[0,"values"]],
 		[[2]]
 	],
 	"array" : [
-		[[0,"whitespace"],[1,"["],[0,"whitespace"],[0,"values-optional"],[0,"whitespace"],[1,"]"],[0,"whitespace"]]
+		[[0,"whitespace"],[1,"["],[0,"whitespace"],[0,"values-optional"],[0,"whitespace"],[1,"]"],[0,"whitespace"],[0,"array_finish"]]
+	],
+	"array_finish" : [
+		[[2]]
 	],
 	"main" : [
-		[[0,"object"]],
-		[[0,"array"]]
+		[[0,"object"],[0,"main_finish"]],
+		[[0,"array"],[0,"main_finish"]]
+	],
+	"main_finish" : [
+		[[2]]
 	]
 }

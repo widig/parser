@@ -1,0 +1,4 @@
+{
+	/* teste de comentarios* * ****** asd*/
+	"key" : "value"
+}

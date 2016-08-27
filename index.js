@@ -46,7 +46,7 @@ var context = {};
 
 // load last preferences of language
 
-var selected_language = "json"
+var selected_language = "json_next"
 var version = "v.1.0";
 if(!("context" in context)) {
 	var files = fs.readdirSync("./language" + path.sep + selected_language + path.sep + "memory");
@@ -95,7 +95,7 @@ prompt(function(data) {
 		var r = parser(options);
 		if(r.result) {
 			console.log("PARSED:"+r.code.substring(r.range[0],r.range[1]));
-			tests.checkTestOK(selected_language,r.code.substring(r.range[0],r.range[1]));
+			tests.checkTestOK(selected_language,r.code.substring(r.range[0],r.range[1]),"result" in context ? context.result : null);
 		} else {
 			tests.checkTestFAIL(selected_language);
 		}

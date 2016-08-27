@@ -1,127 +1,195 @@
 {
-	"OpenCurlyBrackets" : [ 
-		[ [0,"WhiteSpaceArray"],[1,"{"],[0,"WhiteSpaceArray"] ]
+	"charset_whitespace" : [
+		[[4," \r\n\t"]]
 	],
-	"CloseCurlyBrackets" : [
-		[ [0,"WhiteSpaceArray"],[1,"}"],[0,"WhiteSpaceArray"] ]
+	"charset_comments1" : [
+		[[5,32,33]],
+		[[5,35,46]],
+		[[5,48,91]],
+		[[5,93,1114111]],
+		[[4," \r\n\t"]]
 	],
-	"OpenSquareBrackets" : [
-		[ [0,"WhiteSpaceArray"],[1,"["],[0,"WhiteSpaceArray"] ]
+	"charset_comments2" : [
+		[[5,32,33]],
+		[[5,35,41]],
+		[[5,43,91]],
+		[[5,93,1114111]],
+		[[4," \r\n\t"]]
 	],
-	"CloseSquareBrackets" : [
-		[ [0,"WhiteSpaceArray"],[1,"]"],[0,"WhiteSpaceArray"] ]
+	"string_comments_item" : [
+		[[1,"*"],[0,"charset_comments1"],[15,"if next is / and previous is * fails"]],
+		[[0,"charset_comments2"]]
 	],
-	"DoubleQuotationMark" : [
-		[ [0,"WhiteSpaceArray"],[1,"\""],[0,"WhiteSpaceArray"] ]
+	"string_comments" : [
+		[[3,"string_comments_item"]]
 	],
-	"Colon" : [
-		[ [0,"WhiteSpaceArray"],[1,","],[0,"WhiteSpaceArray"] ]
+	"comments" : [
+		[[1,"/*"],[0,"string_comments"],[1,"*/"]],
+		[[1,"/*"],[1,"*/"]]
 	],
-	"Comma" : [
-		[ [0,"WhiteSpaceArray"],[1,":"],[0,"WhiteSpaceArray"] ]
+	"whitespace_item": [
+		[[0,"comments"]],
+		[[0,"charset_whitespace"]]
 	],
-	"WhiteSpace" : [
-		[ [4," \r\n\t"] ]
-	],
-	"WhiteSpaceArray" : [
-		[ [6,"WhiteSpace"] ]
-	],
-	"hex_digit_lower" : [
-		[ [4,"0123456789abcdef"] ]
-	],
-	"hex_digit_upper" : [
-		[ [4,"0123456789ABCDEF"] ]
-	],
-	"hex_digit" : [
-		[ [7,"hex_digit_lower",4,4] ],
-		[ [7,"hex_digit_upper",4,4] ]
-	],
-	"escape_char" : [
-		[ [1,"\""] ],
-		[ [1,"\\"] ],
-		[ [1,"/"] ],
-		[ [1,"b"] ],
-		[ [1,"f"] ],
-		[ [1,"n"] ],
-		[ [1,"r"] ],
-		[ [1,"t"] ],
-		[ [1,"u"],[0,"hex_digit"] ]
-	],
-	"string_char_array" : [
-		[ [1,"\\"],[0,"escape_char"] ],
-		[ [5,32,33] ],
-		[ [5,35,91] ],
-		[ [5,93,1114111] ]
-	],
-	"string" : [
-		[ [0,"DoubleQuotationMark"], [6,"string_char_array"] , [0,"DoubleQuotationMark"] ]
-	],
-	"minus" : [
-		[ [1,"-"] ]
-	],
-	"plus" : [
-		[ [1,"+"] ]
-	],
-	"zero" : [
-		[ [1,"0"] ]
-	],
-	"digit" : [
-		[ [4,"0123456789"] ]
-	],
-	"int" : [
-		[ [0,"zero"] ],
-		[ [3,"digit"] ]
-	],
-	"frac" : [
-		[ [1,"."], [3,"digit"] ]
-	],
-	"signal_opt" : [
-		[ [7,"minus",0,1] ],
-		[ [7,"plus",0,1] ]
-	],
-	"exp" : [
-		[ [1,"e"], [0,"signal_opt"], [3,"digit"] ]
-	],
-	"number" : [
-		[ [7,"minus",0,1], [0,"int"], [7,"frac",0,1],[7,"exp",0,1] ]
-	],
-	"null" : [
-		[ [1,"null"] ]
-	],
-	"false" : [
-		[ [1,"false"] ]
-	],
-	"true" : [ 
-		[ [1,"true"] ]
-	],
-	"value" : [
-		[ [0,"null"] ],
-		[ [0,"false"] ],
-		[ [0,"true"] ],
-		[ [0,"object"] ],
-		[ [0,"array"] ],
-		[ [0,"number" ] ],
-		[ [0,"string"] ]
-	],
-	"member" : [
-		[ [0,"string"] , [ 0,"Colon"] , [ 0, "value"] ]
-	],
-	"members" : [
-		[ [0,"member"], [0,"Comma"], [0,"members"] ],
-		[ [0,"member"] ]
+	"whitespace" : [
+		[[6,"whitespace_item"]]
 	],
 	"object" : [
-		[ [0,"OpenCurlyBrackets"], [7,"members",0,1], [0,"CloseCurlyBrackets"] ]
+		[[0,"whitespace"],[1,"{"],[0,"whitespace"],[0,"members_optional"],[0,"whitespace"],[1,"}"],[0,"whitespace"],[0,"object_finish"]]
+	],
+	"object_finish" : [
+		[[2]]
+	],
+	"members_optional" : [
+		[[0,"members"]],
+		[[2]]
+	],
+	"members" : [
+		[[0,"member"],[0,"whitespace"],[1,","],[0,"whitespace"],[0,"members"]],
+		[[0,"member"]]
+	],
+	"member" : [
+		[
+			[0,"member_bk"],
+			[0,"string"],
+			[0,"member_ak"],
+			[0,"whitespace"],
+			[1,":"],
+			[0,"whitespace"],
+			[0,"member_bv"],
+			[0,"value"],
+			[0,"member_av"]
+		]
+	],
+	"member_bk" : [
+		[[2]]
+	],
+	"member_ak" : [
+		[[2]]
+	],
+	"member_bv" : [
+		[[2]]
+	],
+	"member_av" : [
+		[[2]]
+	],
+	"charset_digit" : [
+		[[4,"0123456789"]]
+	],
+	"charset_pdigit" : [
+		[[4,"123456789"]]
+	],
+	
+	"pnumber" : [
+		[[0,"charset_pdigit"],[6,"charset_digit"]]
+	],
+	"int" : [
+		[[1,"0"]],
+		[[0,"pnumber"]]
+	],
+	"minus_optional" : [
+		[[1,"-"]],
+		[[2]]
+	],
+	"frac_optional" : [
+		[[1,"."],[3,"charset_digit"]],
+		[[2]]
+	],
+	"eE" : [
+		[[1,"e"]],
+		[[1,"E"]]
+	],
+	"minus_plus_optional" : [
+		[[1,"+"]],
+		[[1,"-"]],
+		[[2]]
+	],
+	"exp_optional" : [
+		[[0,"eE"],[0,"minus_plus_optional"],[3,"charset_digit"]],
+		[[2]]
+	],
+	"pre_number" : [
+		[[0,"minus_optional"],[0,"int"],[0,"frac_optional"],[0,"exp_optional"]]
+	],
+	"number" : [
+		[[0,"pre_number"]]
+	],
+	"string_char_unescaped" : [
+		[[5,32,33]],
+		[[5,35,91]],
+		[[5,93,1114111]]
+	],
+	"charset_hex_lower" : [
+		[[4,"0123456789abcdef"]]
+	],
+	"charset_hex_upper" : [
+		[[4,"0123456789ABCDEF"]]
+	],
+	"hex_digit" : [
+		[[0,"charset_hex_lower"]],
+		[[0,"charset_hex_upper"]]
+	],
+	"hex_digits" : [
+		[[7,"hex_digit",4,4]]
+	],
+	"string_escaped" : [
+		[[1,"\""]],
+		[[1,"\\"]],
+		[[1,"/"]],
+		[[1,"b"]],
+		[[1,"f"]],
+		[[1,"n"]],
+		[[1,"r"]],
+		[[1,"t"]],
+		[[1,"u"],[7,"hex_digit",4,4]]
+	],
+	"string_char_escaped" : [
+		[[1,"\\"],[0,"string_escaped"]]
+	],
+	"string_char" : [
+		[[0,"string_char_unescaped"]],
+		[[0,"string_char_escaped"]]
+	],
+	"string" : [
+		[[1,"\""],[6,"string_char"],[1,"\""]]
+	],
+	"value" : [
+		[[0,"array"]],
+		[[0,"object"]],
+		[[0,"number"]],
+		[[0,"string"]],
+		[[0,"boolean"]],
+		[[0,"null"]]
+	],
+	"null" : [
+		[[1,"null"]]
+	],
+	"boolean" : [
+		[[1,"true"]],
+		[[1,"false"]]
 	],
 	"values" : [
-		[ [0,"value"], [0,"Comma"], [0,"values"] ],
-		[ [0,"value"] ]
+		[[0,"value"],[0,"value_in"],[0,"whitespace"],[1,","],[0,"whitespace"],[0,"values"]],
+		[[0,"value"],[0,"value_in"]]
+	],
+	"value_in" : [
+		[[2]]
+	],
+	"values-optional" : [
+		[[0,"values"]],
+		[[2]]
 	],
 	"array" : [
-		[ [0,"OpenSquareBrackets"] , [7,"values",0,1], [0,"CloseSquareBrackets"] ]
+		[[0,"whitespace"],[1,"["],[0,"whitespace"],[0,"values-optional"],[0,"whitespace"],[1,"]"],[0,"whitespace"],[0,"array_finish"]]
+	],
+	"array_finish" : [
+		[[2]]
 	],
 	"main" : [
-		[ [ 0, "object"] ],
-		[ [ 0, "array"] ]
+		[[0,"object"],[0,"main_finish"]],
+		[[0,"array"],[0,"main_finish"]]
+	],
+	"main_finish" : [
+		[[2]]
 	]
 }

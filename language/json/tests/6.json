@@ -1,5 +1,5 @@
 {
 	"result" : true, 
 	"parsed" : "[1.0e-1]",
-	"value" : [0.1]
+	"resultEqual" : [0.1]
 }

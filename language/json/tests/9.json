@@ -1,0 +1,5 @@
+{
+	"result" : true, 
+	"parsed" : "[\"test\", 1.0e+1,null  , true   , false , [] , {} ]",
+	"resultEqual" : ["test", 1.0e+1,null  , true   , false , [] , {} ]
+}

@@ -1,0 +1,5 @@
+{
+	"result" : true, 
+	"parsed" : "{\r\n\t\"key\" : \"value\"\r\n}",
+	"resultEqual" : {"key":"value"}
+}
